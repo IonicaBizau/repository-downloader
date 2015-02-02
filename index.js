@@ -73,7 +73,7 @@ function downloadRepos(repos, callback) {
         funcs.push(function (callback) {
             var repo = new Repo("./downloads");
             Logger.log("Repository: " + c.full_name, "progress");
-            repo.exec("clone " + c.ssh_url + " " + c.full_name, function (err) {
+            repo.exec("clone " + c.ssh_url + " github/" + c.full_name, function (err) {
 
                 if (err) {
                     notDownloaded.push(c);
