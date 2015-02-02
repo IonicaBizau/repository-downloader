@@ -9,7 +9,7 @@ Logger.config.logLevel = 4;
 Logger.config.displayDate = false;
 Logger.config.progress = {
     color: "#3498db"
-  , text: "   >"
+  , text: "   > "
 };
 
 function makeApiRequest(api, callback) {
@@ -66,6 +66,7 @@ function getAllRepos(user, isOrg, callback) {
 function downloadRepos(repos, callback) {
     var funcs = []
       , complete = 0
+      , notDownloaded = []
       ;
 
     repos.forEach(function (c) {
@@ -73,14 +74,26 @@ function downloadRepos(repos, callback) {
             var repo = new Repo("./downloads");
             Logger.log("Repository: " + c.full_name, "progress");
             repo.exec("clone " + c.ssh_url + " " + c.full_name, function (err) {
-                if (err) { return callback(err); }
+
+                if (err) {
+                    notDownloaded.push(c);
+                    return callback();
+                }
+
                 Logger.log("Downloaded " + c.full_name + " (" + (++complete) + "/" + repos.length + ")", "progress");
                 callback();
             });
         });
     });
 
-    Async.parallel(funcs, callback);
+    Async.parallel(funcs, function (err) {
+
+        if (notDownloaded.length) {
+            Logger.log(notDownloaded.length + " repos failed to download. Trying again.", "warn");
+            return downloadRepos(notDownloaded, callback);
+        }
+        callback();
+    });
 }
 
 Logger.log("Getting the organizations you belong to.", "info");
@@ -93,6 +106,21 @@ getOrgs(function (err, orgs) {
         downloadRepos(myRepos, function (err) {
             if (err) { return Logger.log(err, "error"); }
             Logger.log("Downloaded all user repos.", "info");
+            var downloadOrgRepos = [];
+            orgs.forEach(function (c) {
+                downloadOrgRepos.push(function (callback) {
+                    Logger.log("Getting " + c.login + "'s repositories.", "info");
+                    getAllRepos(c.login, true, function (err, repos) {
+                        if (err) { return callback(err); }
+                        Logger.log("Downloading " + c.login + "'s repositories.", "info");
+                        downloadOrgRepos(repos, callback);
+                    });
+                });
+            });
+            Async.series(downloadOrgRepos, function (err) {
+                if (err) { return Logger.log(err, "error"); }
+                Logger.log(err, "info");
+            });
         });
     });
 });
