@@ -1,5 +1,2 @@
-*.swp
-*.swo
-*~
-*.log
-node_modules
+*
+!.gitignore
