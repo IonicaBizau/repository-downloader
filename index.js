@@ -5,6 +5,13 @@ var Config = require("./config")
   , Async = require("async")
   ;
 
+Logger.config.logLevel = 4;
+Logger.config.displayDate = false;
+Logger.config.progress = {
+    color: "#3498db"
+  , text: "   >"
+};
+
 function makeApiRequest(api, callback) {
     Request({
         url: "https://api.github.com/" + api
@@ -43,11 +50,12 @@ function getAllRepos(user, isOrg, callback) {
     }
 
     function seq() {
-        makeApiRequest(api + "?per_page=100&page=" + (++page), function (err, res) {
+        Logger.log("Page: " + (++page), "progress");
+        makeApiRequest(api + "?per_page=100&page=" + page, function (err, res) {
             if (err) { return callback(err); }
             allRepos = allRepos.concat(res);
             if (!res.length) {
-                callback(null, res);
+                return callback(null, allRepos);
             }
             seq();
         });
@@ -56,25 +64,32 @@ function getAllRepos(user, isOrg, callback) {
 }
 
 function downloadRepos(repos, callback) {
-    var funcs = [];
+    var funcs = []
+      , complete = 0
+      ;
+
     repos.forEach(function (c) {
         funcs.push(function (callback) {
             var repo = new Repo("./downloads");
+            Logger.log("Repository: " + c.full_name, "progress");
             repo.exec("clone " + c.ssh_url + " " + c.full_name, function (err) {
                 if (err) { return callback(err); }
-                Logger.log("Downloaded " + c.full_name, "info");
+                Logger.log("Downloaded " + c.full_name + " (" + (++complete) + "/" + repos.length + ")", "progress");
                 callback();
             });
         });
     });
 
-    Async.paralel(funcs, callback);
+    Async.parallel(funcs, callback);
 }
 
+Logger.log("Getting the organizations you belong to.", "info");
 getOrgs(function (err, orgs) {
     if (err) { return Logger.log(err, "error"); }
+    Logger.log("Getting all your repositories.", "info");
     getAllRepos(Config.username, function (err, myRepos) {
         if (err) { return Logger.log(err, "error"); }
+        Logger.log("Downloading all your repositories.", "info");
         downloadRepos(myRepos, function (err) {
             if (err) { return Logger.log(err, "error"); }
             Logger.log("Downloaded all user repos.", "info");
