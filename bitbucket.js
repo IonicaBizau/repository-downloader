@@ -15,11 +15,8 @@ Logger.config.progress = {
 
 function makeApiRequest(api, callback) {
     Request({
-        url: "https://api.github.com/" + api
-      , auth: Config
-      , headers: {
-            "user-agent": "Repo Downloader"
-        }
+        url: "https://bitbucket.org/api/" + api
+      , auth: Config.bitbucket
     }, function (err, res, body) {
         if (err) { return callback(err); }
         try {
@@ -33,7 +30,7 @@ function makeApiRequest(api, callback) {
 }
 
 function getOrgs(callback) {
-    makeApiRequest("user/orgs", callback);
+    makeApiRequest("1.0/user/privileges", callback);
 }
 
 function getAllRepos(user, isOrg, callback) {
@@ -41,23 +38,19 @@ function getAllRepos(user, isOrg, callback) {
         callback = isOrg;
         isOrg = false;
     }
-    var api = "users/" + user + "/repos"
+    var api = "2.0/repositories/" + user
       , page = 0
       , allRepos = []
       ;
 
-    if (isOrg) {
-        api = "orgs/" + user + "/repos";
-    }
-
     function seq() {
         Logger.log("Page: " + (++page), "progress");
-        makeApiRequest(api + "?per_page=100&page=" + page, function (err, res) {
-            if (err) { return callback(err); }
-            allRepos = allRepos.concat(res);
-            if (!res.length) {
+        makeApiRequest(api + "?limit=50&page=" + page, function (err, res) {
+            if (err && err.message !== "Invalid page") { return callback(err); }
+            if (err || !res.values || !res.values.length) {
                 return callback(null, allRepos);
             }
+            allRepos = allRepos.concat(res.values);
             seq();
         });
     }
@@ -73,7 +66,7 @@ function downloadRepos(repos, callback) {
     repos.forEach(function (c) {
         funcs.push(function (callback) {
             var repo = new Repo("./downloads")
-              , path = "github/" + c.full_name
+              , path = "bitbucket/" + c.full_name
               ;
 
             if (Fs.existsSync(__dirname + "/downloads/" + path)) {
@@ -82,7 +75,7 @@ function downloadRepos(repos, callback) {
             }
 
             Logger.log("Repository: " + c.full_name, "progress");
-            repo.exec("clone " + c.ssh_url + " " + path, function (err) {
+            repo.exec("clone " + c.links.clone[1].href + " " + path, function (err) {
 
                 if (err) {
                     notDownloaded.push(c);
@@ -108,8 +101,9 @@ function downloadRepos(repos, callback) {
 Logger.log("Getting the organizations you belong to.", "info");
 getOrgs(function (err, orgs) {
     if (err) { return Logger.log(err, "error"); }
+    orgs = Object.keys(orgs.teams).map(function (c) { return { login: c }; });
     Logger.log("Getting all your repositories.", "info");
-    getAllRepos(Config.username, function (err, myRepos) {
+    getAllRepos(Config.github.username, function (err, myRepos) {
         if (err) { return Logger.log(err, "error"); }
         Logger.log("Downloading all your repositories.", "info");
         downloadRepos(myRepos, function (err) {
