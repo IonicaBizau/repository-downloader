@@ -1,2 +1,4 @@
 node github.js
 node bitbucket.js
+cd downloads
+./import.sh
