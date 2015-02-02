@@ -3,6 +3,7 @@ var Config = require("./config")
   , Logger = require("bug-killer")
   , Repo = require("gry")
   , Async = require("async")
+  , Fs = require("fs")
   ;
 
 Logger.config.logLevel = 4;
@@ -71,9 +72,17 @@ function downloadRepos(repos, callback) {
 
     repos.forEach(function (c) {
         funcs.push(function (callback) {
-            var repo = new Repo("./downloads");
+            var repo = new Repo("./downloads")
+              , path = "github/" + c.full_name
+              ;
+
+            if (Fs.existsSync(__dirname + "/downloads/" + path)) {
+                Logger.log("Repository already downloaded: " + c.full_name, "warn");
+                return callback();
+            }
+
             Logger.log("Repository: " + c.full_name, "progress");
-            repo.exec("clone " + c.ssh_url + " github/" + c.full_name, function (err) {
+            repo.exec("clone " + c.ssh_url + " " + path, function (err) {
 
                 if (err) {
                     notDownloaded.push(c);
@@ -113,13 +122,13 @@ getOrgs(function (err, orgs) {
                     getAllRepos(c.login, true, function (err, repos) {
                         if (err) { return callback(err); }
                         Logger.log("Downloading " + c.login + "'s repositories.", "info");
-                        downloadOrgRepos(repos, callback);
+                        downloadRepos(repos, callback);
                     });
                 });
             });
             Async.series(downloadOrgRepos, function (err) {
                 if (err) { return Logger.log(err, "error"); }
-                Logger.log(err, "info");
+                Logger.log("Done.", "info");
             });
         });
     });
