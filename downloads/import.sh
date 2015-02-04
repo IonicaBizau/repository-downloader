@@ -1,4 +1,4 @@
-#printf '"%s"\n' */ | xargs -L 1 bash -c 'cd "$1" && echo $1 && ~/documents/git-stats-importer/bin/git-stats-importer' _
+#!/bin/bash
 for sour in */ ; do
     echo ">> $sour"
     cd $sour
