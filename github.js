@@ -36,11 +36,40 @@ function getOrgs(callback) {
     makeApiRequest("user/orgs", callback);
 }
 
-function getAllRepos(user, isOrg, callback) {
+function getPRRepos(user, orgs, callback) {
+    var api = "search/issues?q=author:" + user + "%20is:pr"
+      , page = 0
+      , allRepos = []
+      , ignoreAccounts = orgs.map(function (c) { return c.login; }).concat([Config.github.username])
+      ;
+
+    function seq() {
+        Logger.log("Page: " + (++page), "progress");
+        makeApiRequest(api + "&per_page=100&page=" + page, function (err, res) {
+            if (err) { return callback(err); }
+
+            allRepos = allRepos.concat(res.items.filter(function (c) {
+                return ignoreAccounts.indexOf(c.user.login) === -1;
+            }));
+
+
+
+            if (!res.items.length) {
+                return callback(null, allRepos);
+            }
+
+            seq();
+        });
+    }
+    seq();
+}
+
+function getAllRepos(user, orgs, isOrg, callback) {
     if (typeof isOrg === "function") {
         callback = isOrg;
         isOrg = false;
     }
+
     var api = "users/" + user + "/repos"
       , page = 0
       , allRepos = []
@@ -56,7 +85,12 @@ function getAllRepos(user, isOrg, callback) {
             if (err) { return callback(err); }
             allRepos = allRepos.concat(res);
             if (!res.length) {
-                return callback(null, allRepos);
+                Logger.log("Getting the repositories where " + user + " created pull requests.", "info");
+                return getPRRepos(user, orgs, function (err, prRepos) {
+                    if (err) { return callback(err); }
+                    allRepos = allRepos.concat(prRepos);
+                    return callback(null, allRepos);
+                });
             }
             seq();
         });
@@ -71,6 +105,11 @@ function downloadRepos(repos, callback) {
       ;
 
     repos.forEach(function (c) {
+
+        if (!c.full_name || !c.ssh_url) {
+            debugger
+        }
+
         funcs.push(function (callback) {
             var repo = new Repo("./downloads")
               , path = "github/" + c.full_name
@@ -109,7 +148,7 @@ Logger.log("Getting the organizations you belong to.", "info");
 getOrgs(function (err, orgs) {
     if (err) { return Logger.log(err, "error"); }
     Logger.log("Getting all your repositories.", "info");
-    getAllRepos(Config.github.username, function (err, myRepos) {
+    getAllRepos(Config.github.username, orgs, function (err, myRepos) {
         if (err) { return Logger.log(err, "error"); }
         Logger.log("Downloading all your repositories.", "info");
         downloadRepos(myRepos, function (err) {
@@ -119,7 +158,7 @@ getOrgs(function (err, orgs) {
             orgs.forEach(function (c) {
                 downloadOrgRepos.push(function (callback) {
                     Logger.log("Getting " + c.login + "'s repositories.", "info");
-                    getAllRepos(c.login, true, function (err, repos) {
+                    getAllRepos(c.login, orgs, true, function (err, repos) {
                         if (err) { return callback(err); }
                         Logger.log("Downloading " + c.login + "'s repositories.", "info");
                         downloadRepos(repos, callback);
