@@ -1,3 +1,4 @@
+// Dependencies
 var Config = require("./config")
   , Request = require("request")
   , Logger = require("bug-killer")
