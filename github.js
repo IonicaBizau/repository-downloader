@@ -1,3 +1,4 @@
+// Dependencies
 var Config = require("./config")
   , Request = require("request")
   , Logger = require("bug-killer")
@@ -6,6 +7,7 @@ var Config = require("./config")
   , Fs = require("fs")
   ;
 
+// Logger configuration
 Logger.config.logLevel = 4;
 Logger.config.displayDate = false;
 Logger.config.progress = {
@@ -13,6 +15,16 @@ Logger.config.progress = {
   , text: "   > "
 };
 
+/**
+ * makeApiRequest
+ * Run API requests.
+ *
+ * @name makeApiRequest
+ * @function
+ * @param {String} api The relative API url.
+ * @param {Function} callback The callback function.
+ * @return {undefined}
+ */
 function makeApiRequest(api, callback) {
     Request({
         url: "https://api.github.com/" + api
@@ -32,15 +44,36 @@ function makeApiRequest(api, callback) {
     });
 }
 
+/**
+ * getOrgs
+ * Gets the organizations where the authenticated user is member.
+ *
+ * @name getOrgs
+ * @function
+ * @param {Function} callback The callback function.
+ * @return {undefined}
+ */
 function getOrgs(callback) {
     makeApiRequest("user/orgs", callback);
 }
 
+/**
+ * getPRRepos
+ * Gets the repositories where the `user` created pull requests.
+ *
+ * @name getPRRepos
+ * @function
+ * @param {String} user The user login value.
+ * @param {Array} orgs The organizations where the user belongs to.
+ * @param {Function} callback The callback function.
+ * @return {undefined}
+ */
 function getPRRepos(user, orgs, callback) {
     var api = "search/issues?q=author:" + user + "%20is:pr"
       , page = 0
       , allRepos = []
       , ignoreAccounts = orgs.map(function (c) { return c.login; }).concat([Config.github.username])
+      , match = null
       ;
 
     function seq() {
@@ -49,10 +82,24 @@ function getPRRepos(user, orgs, callback) {
             if (err) { return callback(err); }
 
             allRepos = allRepos.concat(res.items.filter(function (c) {
-                return ignoreAccounts.indexOf(c.user.login) === -1;
+
+                if (!c.full_name || !c.ssh_url || !c.owner) {
+                    match = c.html_url.match(/github\.com\/(.*)\/(.*)\/pull/);
+                    if (!match || match.length !== 3) {
+                        Logger.log("Failed to get repository data for: " + c.html_url + " Incident must be reported.", "error");
+                        return false;
+                    }
+
+                    c.owner = {
+                        login: match[1]
+                    };
+
+                    c.full_name = c.owner.login + "/" + match[2];
+                    c.ssh_url = "git@github.com:" + c.full_name + ".git";
+                }
+
+                return ignoreAccounts.indexOf(c.owner.login) === -1;
             }));
-
-
 
             if (!res.items.length) {
                 return callback(null, allRepos);
@@ -64,6 +111,18 @@ function getPRRepos(user, orgs, callback) {
     seq();
 }
 
+/**
+ * getAllRepos
+ * Gets all repositories from the provided `user`.
+ *
+ * @name getAllRepos
+ * @function
+ * @param {String} user The user login value.
+ * @param {Array} orgs The organizations where the user belongs to.
+ * @param {Boolean} isOrg A flag if the `user` is an organization or not.
+ * @param {Function} callback The callback function.
+ * @return {undefined}
+ */
 function getAllRepos(user, orgs, isOrg, callback) {
     if (typeof isOrg === "function") {
         callback = isOrg;
@@ -98,6 +157,16 @@ function getAllRepos(user, orgs, isOrg, callback) {
     seq();
 }
 
+/**
+ * downloadRepos
+ * Download repositories the provided repositories.
+ *
+ * @name downloadRepos
+ * @function
+ * @param {Array} repos An array with the repositories to download.
+ * @param {Function} callback The callback function.
+ * @return {undefined}
+ */
 function downloadRepos(repos, callback) {
     var funcs = []
       , complete = 0
@@ -105,10 +174,6 @@ function downloadRepos(repos, callback) {
       ;
 
     repos.forEach(function (c) {
-
-        if (!c.full_name || !c.ssh_url) {
-            debugger
-        }
 
         funcs.push(function (callback) {
             var repo = new Repo("./downloads")
@@ -144,16 +209,23 @@ function downloadRepos(repos, callback) {
     });
 }
 
+// Start the magic
 Logger.log("Getting the organizations you belong to.", "info");
 getOrgs(function (err, orgs) {
     if (err) { return Logger.log(err, "error"); }
+
+    // Download user reposiotires
     Logger.log("Getting all your repositories.", "info");
     getAllRepos(Config.github.username, orgs, function (err, myRepos) {
         if (err) { return Logger.log(err, "error"); }
+
+        // Download user repositories
         Logger.log("Downloading all your repositories.", "info");
         downloadRepos(myRepos, function (err) {
             if (err) { return Logger.log(err, "error"); }
             Logger.log("Downloaded all user repos.", "info");
+
+            // Download the organization repositories
             var downloadOrgRepos = [];
             orgs.forEach(function (c) {
                 downloadOrgRepos.push(function (callback) {
@@ -165,6 +237,7 @@ getOrgs(function (err, orgs) {
                     });
                 });
             });
+
             Async.series(downloadOrgRepos, function (err) {
                 if (err) { return Logger.log(err, "error"); }
                 Logger.log("Done.", "info");
