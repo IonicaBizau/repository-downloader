@@ -1,0 +1,34 @@
+{
+  "name": "repo-downloader",
+  "version": "1.0.0",
+  "description": "Download all the repositories from BitBucket and GitHub, including your account, teams and where you created pull requests.",
+  "main": "start",
+  "dependencies": {
+    "bug-killer": "^1.0.0",
+    "gry": "^1.0.0",
+    "request": "^2.51.0",
+    "async": "^0.9.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/IonicaBizau/repository-downloader.git"
+  },
+  "keywords": [
+    "git",
+    "stats",
+    "downloader",
+    "repository",
+    "github",
+    "bitbucket"
+  ],
+  "author": "Ionică Bizău <bizauionica@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/IonicaBizau/repository-downloader/issues"
+  },
+  "homepage": "https://github.com/IonicaBizau/repository-downloader"
+}
