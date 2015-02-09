@@ -1,0 +1,10 @@
+{
+    "github": {
+        "username": "your GitHub username",
+        "password": "your GitHub password"
+    },
+    "bitbucket": {
+        "username": "your BitBucket username",
+        "password": "your BitBucket password"
+    }
+}
