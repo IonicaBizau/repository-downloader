@@ -1,24 +1,19 @@
-# repo-downloader
+# Repository Downloader
 Download all the repositories from BitBucket and GitHub, including your account, teams and where you created pull requests.
 
 ## Installation
-
 ```sh
 $ git clone https://github.com/IonicaBizau/repository-downloader.git repo-downloader
 $ cd repo-downloader
 $ npm install
+$ npm install -g git-stats-importer
 ```
 
 ## Usage
-
-
-## Documentation
-
-
-
+1. Copy `config.tmpl.json` into `config.json` and edit it with your GitHub and BitBucket usernames and passwords.
+2. Run `./start` and wait! :smile:
 
 ## How to contribute
-
 1. File an issue in the repository, using the bug tracker, describing the
    contribution you'd like to make. This will help us to get you started on the
    right foot.
