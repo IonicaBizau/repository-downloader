@@ -8,7 +8,7 @@ for sour in */ ; do
         for repo in */ ; do
             cd $repo
             echo ">> $repo"
-            ~/Documents/git-stats-importer/bin/git-stats-importer
+            git-stats-importer
             cd ..
         done
         cd ..
