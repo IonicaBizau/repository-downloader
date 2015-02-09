@@ -1,4 +1,11 @@
+#!/bin/bash
+
 node github.js
 node bitbucket.js
 cd downloads
-./import.sh
+
+if which git-stats-importer >/dev/null; then
+    ./import.sh
+else
+    echo "Skipping git-stats importing because git-stats-importer was not found. Install it using: npm install -g git-stats-importer"
+fi
