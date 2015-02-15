@@ -142,7 +142,9 @@ function getAllRepos(user, orgs, isOrg, callback) {
             if (!res.length) {
                 Logger.log("Getting the repositories where " + user + " created pull requests.", "info");
                 return getPRRepos(user, orgs, function (err, prRepos) {
-                    if (err) { return callback(err); }
+                    if (err) {
+                        Logger.log(err, "warn");
+                    }
                     allRepos = allRepos.concat(prRepos);
                     return callback(null, allRepos);
                 });
