@@ -79,7 +79,7 @@ function getPRRepos(user, orgs, callback) {
     function seq() {
         Logger.log("Page: " + (++page), "progress");
         makeApiRequest(api + "&per_page=100&page=" + page, function (err, res) {
-            if (err) { return callback(err); }
+            if (err || !res.items) { return callback(err || res && res.message || new Error("Cannot fetch the pull requests.")); }
 
             allRepos = allRepos.concat(res.items.filter(function (c) {
 
