@@ -29,17 +29,13 @@ function makeApiRequest(api, callback) {
     Request({
         url: "https://api.github.com/" + api
       , auth: Config.github
+      , json: true
       , headers: {
             "user-agent": "Repo Downloader"
         }
     }, function (err, res, body) {
+        err = err || body.error || body.message;
         if (err) { return callback(err); }
-        try {
-            body = JSON.parse(body);
-        } catch(e) {
-            return callback(e);
-        }
-        if (body.error) { return callback(body.error); }
         callback(null, body);
     });
 }
@@ -79,7 +75,7 @@ function getPRRepos(user, orgs, callback) {
     function seq() {
         Logger.log("Page: " + (++page), "progress");
         makeApiRequest(api + "&per_page=100&page=" + page, function (err, res) {
-            if (err || !res.items) { return callback(err || res && res.message || new Error("Cannot fetch the pull requests.")); }
+            if (err) { return callback(err); }
 
             allRepos = allRepos.concat(res.items.filter(function (c) {
 
