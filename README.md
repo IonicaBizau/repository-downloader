@@ -10,7 +10,7 @@ $ npm install -g git-stats-importer
 ```
 
 ## Usage
-1. Copy `config.tmpl.json` into `config.json` and edit it with your GitHub and BitBucket usernames and passwords.
+1. Copy `config.tmpl.json` into `config.json` and edit it with your GitHub and BitBucket usernames and passwords. If you're using [two factor authentication](https://help.github.com/articles/about-two-factor-authentication/) on github, please [create an access token](https://developer.github.com/v3/oauth_authorizations/#create-a-new-authorization) and fill it on password field.
 2. Run `./start` and wait! :smile:
 
 ## How to contribute
