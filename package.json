@@ -27,6 +27,9 @@
   ],
   "author": "Ionică Bizău <bizauionica@gmail.com>",
   "license": "MIT",
+  "contributors": [
+    "longears http://pixelbutter.com"
+  ],
   "bugs": {
     "url": "https://github.com/IonicaBizau/repository-downloader/issues"
   },
