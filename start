@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ ! -f ./config.json ]; then
+    cp ./config.tmpl.json config.json
+    echo "config.json was not found. Initialized it with dummy data. Please fill it with correct data."
+    exit 1;
+fi
+
 node github.js
 node bitbucket.js
 cd downloads
