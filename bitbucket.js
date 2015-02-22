@@ -104,7 +104,7 @@ getOrgs(function (err, orgs) {
     if (err) { return Logger.log(err, "error"); }
     orgs = Object.keys(orgs.teams).map(function (c) { return { login: c }; });
     Logger.log("Getting all your repositories.", "info");
-    getAllRepos(Config.github.username, function (err, myRepos) {
+    getAllRepos(Config.bitbucket.username, function (err, myRepos) {
         if (err) { return Logger.log(err, "error"); }
         Logger.log("Downloading all your repositories.", "info");
         downloadRepos(myRepos, function (err) {
