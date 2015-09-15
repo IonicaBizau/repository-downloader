@@ -7,8 +7,7 @@ var Config = require("./config")
   , Fs = require("fs")
   ;
 
-Logger.config.logLevel = 4;
-Logger.config.displayDate = false;
+// Logger configuration
 Logger.config.progress = {
     color: "#3498db"
   , text: "   > "
