@@ -4,10 +4,10 @@
   "description": "Download all the repositories from BitBucket and GitHub, including your account, teams and where you created pull requests.",
   "main": "start",
   "dependencies": {
-    "bug-killer": "^1.0.0",
-    "gry": "^2.1.0",
-    "request": "^2.51.0",
-    "async": "^0.9.0"
+    "bug-killer": "^4.0.0",
+    "gry": "^4.0.0",
+    "request": "^2.62.0",
+    "async": "^1.4.2"
   },
   "devDependencies": {},
   "scripts": {
