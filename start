@@ -6,12 +6,15 @@ if [ ! -f ./config.json ]; then
     exit 1;
 fi
 
+echo 'Running `node github.js`'
 node github.js
+
+echo 'Running `node bitbucket.js`'
 node bitbucket.js
 cd downloads
 
-if which git-stats-importer >/dev/null; then
-    ./import.sh
+if which git-stats-importer > /dev/null; then
+    ./import.sh $*
 else
     echo "Skipping git-stats importing because git-stats-importer was not found. Install it using: npm install -g git-stats-importer"
 fi
