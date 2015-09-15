@@ -2,10 +2,6 @@
   "name": "repo-downloader",
   "version": "1.2.0",
   "description": "Download all the repositories from BitBucket and GitHub, including your account, teams and where you created pull requests.",
-  "main": "lib/index.js",
-  "bin": {
-      "repo-downloader": "./bin/repo-downloader"
-  },
   "dependencies": {
     "bug-killer": "^1.0.0",
     "gry": "^2.1.0",
