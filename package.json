@@ -24,7 +24,7 @@
     "github",
     "bitbucket"
   ],
-  "author": "Ionică Bizău <bizauionica@gmail.com>",
+  "author": "Ionică Bizău <bizauionica@gmail.com> (http://ionicabizau.net)",
   "license": "KINDLY",
   "contributors": [
     "longears http://pixelbutter.com"
@@ -32,5 +32,37 @@
   "bugs": {
     "url": "https://github.com/IonicaBizau/repository-downloader/issues"
   },
-  "homepage": "https://github.com/IonicaBizau/repository-downloader"
+  "homepage": "https://github.com/IonicaBizau/repository-downloader",
+  "blah": {
+    "title": "Repository Downloader",
+    "show_docs": false,
+    "installation": [
+      {
+        "h2": "Installation"
+      },
+      {
+        "code": {
+          "language": "sh",
+          "content": [
+            "$ git clone https://github.com/IonicaBizau/repository-downloader.git repo-downloader",
+            "$ cd repo-downloader",
+            "$ npm i",
+            "$ npm i -g git-stats-importer"
+          ]
+        }
+      },
+      {
+        "h2": "Usage"
+      },
+      {
+        "ol": [
+          "Copy `config.tmpl.json` into `config.json` and edit it with your GitHub and BitBucket usernames and passwords. If you're using [two factor authentication](https://help.github.com/articles/about-two-factor-authentication/) on github, please [create an access token](https://developer.github.com/v3/oauth_authorizations/#create-a-new-authorization) and fill it on password field.",
+          "Run `./start` and wait! :smile:"
+        ]
+      },
+      {
+        "p": ":bulb: You can pass arguments which are understood by `git-stats-importer` (e.g. `./start -e 'alice@example.com,bob@example.com'`)."
+      }
+    ]
+  }
 }
