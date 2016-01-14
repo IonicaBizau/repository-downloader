@@ -1,6 +1,6 @@
-# Repository Downloader [![Support this project][donate-now]][paypal-donations]
+# Repository Downloader [![PayPal](https://img.shields.io/badge/%24-paypal-f39c12.svg)][paypal-donations] [![Version](https://img.shields.io/npm/v/repo-downloader.svg)](https://www.npmjs.com/package/repo-downloader) [![Downloads](https://img.shields.io/npm/dt/repo-downloader.svg)](https://www.npmjs.com/package/repo-downloader) [![Get help on Codementor](https://cdn.codementor.io/badges/get_help_github.svg)](https://www.codementor.io/johnnyb?utm_source=github&utm_medium=button&utm_term=johnnyb&utm_campaign=github)
 
-Download all the repositories from BitBucket and GitHub, including your account, teams and where you created pull requests.
+> Download all the repositories from BitBucket and GitHub, including your account, teams and where you created pull requests.
 
 ## Installation
 ```sh
