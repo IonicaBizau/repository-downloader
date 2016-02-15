@@ -171,6 +171,8 @@ function downloadRepos(repos, callback) {
 
     repos.forEach(function (c) {
 
+        if (!c) { return; }
+
         funcs.push(function (callback) {
             var repo = new Repo("./downloads")
               , path = "github/" + c.full_name
