@@ -1,6 +1,6 @@
 {
   "name": "repo-downloader",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "Download all the repositories from BitBucket and GitHub, including your account, teams and where you created pull requests.",
   "dependencies": {
     "bug-killer": "^4.0.0",
@@ -64,5 +64,17 @@
         "p": ":bulb: You can pass arguments which are understood by `git-stats-importer` (e.g. `./start -e 'alice@example.com,bob@example.com'`)."
       }
     ]
-  }
+  },
+  "files": [
+    "bin/",
+    "app/",
+    "lib/",
+    "dist/",
+    "src/",
+    "resources/",
+    "menu/",
+    "cli.js",
+    "index.js"
+  ],
+  "main": "lib/index.js"
 }
