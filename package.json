@@ -1,5 +1,5 @@
 {
-  "name": "repo-downloader",
+  "name": "repository-downloader",
   "version": "2.2.2",
   "description": "Download all the repositories from BitBucket and GitHub, including your account, teams and where you created pull requests.",
   "dependencies": {
