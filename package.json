@@ -1,6 +1,6 @@
 {
   "name": "repository-downloader",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "description": "Download all the repositories from BitBucket and GitHub, including your account, teams and where you created pull requests.",
   "dependencies": {
     "bug-killer": "^4.0.0",
@@ -69,6 +69,7 @@
     "bin/",
     "app/",
     "lib/",
+    "build/",
     "dist/",
     "src/",
     "resources/",
