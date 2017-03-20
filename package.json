@@ -1,6 +1,6 @@
 {
   "name": "repository-downloader",
-  "version": "2.2.4",
+  "version": "2.2.5",
   "description": "Download all the repositories from BitBucket and GitHub, including your account, teams and where you created pull requests.",
   "dependencies": {
     "bug-killer": "^4.0.0",
@@ -24,7 +24,7 @@
     "github",
     "bitbucket"
   ],
-  "author": "Ionică Bizău <bizauionica@gmail.com> (http://ionicabizau.net)",
+  "author": "Ionică Bizău <bizauionica@gmail.com> (https://ionicabizau.net)",
   "license": "MIT",
   "contributors": [
     "longears http://pixelbutter.com"
@@ -69,12 +69,11 @@
     "bin/",
     "app/",
     "lib/",
-    "build/",
     "dist/",
     "src/",
+    "scripts/",
     "resources/",
     "menu/",
-    "scripts/",
     "cli.js",
     "index.js"
   ],
