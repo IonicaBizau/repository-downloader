@@ -15,7 +15,7 @@ Logger.config.progress = {
 
 function makeApiRequest(api, callback) {
     Request({
-        url: "https://bitbucket.org/api/" + api
+        url: "https://api.bitbucket.org/" + api
       , auth: Config.bitbucket
     }, function (err, res, body) {
         if (err) { return callback(err); }
@@ -30,7 +30,7 @@ function makeApiRequest(api, callback) {
 }
 
 function getOrgs(callback) {
-    makeApiRequest("1.0/user/privileges", callback);
+    makeApiRequest("2.0/user/permissions/teams", callback);
 }
 
 function getAllRepos(user, isOrg, callback) {
@@ -101,7 +101,7 @@ function downloadRepos(repos, callback) {
 Logger.log("Getting the organizations you belong to.", "info");
 getOrgs(function (err, orgs) {
     if (err) { return Logger.log(err, "error"); }
-    orgs = Object.keys(orgs.teams).map(function (c) { return { login: c }; });
+    orgs = orgs.values.map(function (c) { return c.team; });
     Logger.log("Getting all your repositories.", "info");
     getAllRepos(Config.bitbucket.username, function (err, myRepos) {
         if (err) { return Logger.log(err, "error"); }
@@ -112,10 +112,10 @@ getOrgs(function (err, orgs) {
             var downloadOrgRepos = [];
             orgs.forEach(function (c) {
                 downloadOrgRepos.push(function (callback) {
-                    Logger.log("Getting " + c.login + "'s repositories.", "info");
-                    getAllRepos(c.login, true, function (err, repos) {
+                    Logger.log("Getting " + c.username + "'s repositories.", "info");
+                    getAllRepos(c.username, true, function (err, repos) {
                         if (err) { return callback(err); }
-                        Logger.log("Downloading " + c.login + "'s repositories.", "info");
+                        Logger.log("Downloading " + c.username + "'s repositories.", "info");
                         downloadRepos(repos, callback);
                     });
                 });
