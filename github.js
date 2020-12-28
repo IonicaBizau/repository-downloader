@@ -189,7 +189,7 @@ function downloadRepos(repos, callback) {
             repo.exec("clone " + c.clone_url + " " + path, function (err) {
 
                 if (err) {
-                    console.log(err);
+                    Logger.log(err);
                     notDownloaded.push(c);
                     return callback();
                 }
