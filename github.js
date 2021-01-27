@@ -91,7 +91,6 @@ function getPRRepos(user, orgs, callback) {
 
                     c.full_name = c.owner.login + "/" + match[2];
                     c.ssh_url = "git@github.com:" + c.full_name + ".git";
-                    c.clone_url = "https://github.com/" + c.full_name + ".git";
                 }
 
                 return ignoreAccounts.indexOf(c.owner.login) === -1;
@@ -186,7 +185,7 @@ function downloadRepos(repos, callback) {
             }
 
             Logger.log("Repository: " + c.full_name, "progress");
-            repo.exec("clone " + c.clone_url + " " + path, function (err) {
+            repo.exec("clone " + c.ssh_url + " " + path, function (err) {
 
                 if (err) {
                     Logger.log(err);
