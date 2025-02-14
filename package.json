@@ -1,6 +1,6 @@
 {
   "name": "repository-downloader",
-  "version": "2.2.10",
+  "version": "2.2.11",
   "description": "Download all the repositories from BitBucket and GitHub, including your account, teams and where you created pull requests.",
   "dependencies": {
     "bug-killer": "^4.0.0",
@@ -77,6 +77,8 @@
     "menu/",
     "cli.js",
     "index.js",
+    "index.d.ts",
+    "package-lock.json",
     "bloggify.js",
     "bloggify.json",
     "bloggify/"
